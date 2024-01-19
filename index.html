@@ -1,0 +1,140 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Shaun Inman Legacy</title>
+
+	<style>
+		html {
+			font: 18px/1.8 system-ui;
+		}
+
+		body {
+			font-size: 1.2em; /* 12px */
+			line-height: 1.5; /* 16px / 12px * 10px */
+		}
+
+		dl {
+			margin: 2rem;
+		}
+
+		dt {
+			font-size: 0.75em;
+			color: #ac7c00;
+			margin-top: calc(1 / 3em);
+		}
+
+		dd {
+			margin: 0 0 0.25rem 0;
+			white-space: nowrap;
+			line-height: 1.3em;
+		}
+
+		dd + dt {
+			margin-block-start: 0.5rem;
+		}
+
+		a {
+			/* position: relative; */
+			display: inline-block;
+			background: #eee;
+			color: #333;
+			padding: 0 0.25em; /* 3px/12px */
+			border-radius: 0.25em; /* 3px/12px */
+			margin-left: -0.25em; /* -3px/12px */
+			text-decoration: none;
+			transition: all 0.01s;
+
+			animation-duration: 0.25s;
+			animation-timing-function: ease;
+			/* animation-iteration-count: infinite; */
+		}
+
+		a:is(:hover, :focus) {
+			color: #00adee;
+			background-color: transparent;
+		}
+
+		@keyframes bounce-back {
+			/*0%   { transform: translate(calc(var(--last-x) * 1px), calc(var(--last-y) * 1px)); } */
+			20%   { transform: translate(calc(var(--last-x) * -1px), calc(var(--last-y) * -1px)); }
+			40%   { transform: translate(calc(var(--last-x) * 0.75px), calc(var(--last-y) * 0.75px)); }
+			60%   { transform: translate(calc(var(--last-x) * -0.5px), calc(var(--last-y) * -0.5px)); }
+			80%   { transform: translate(calc(var(--last-x) * 0.25px), calc(var(--last-y) * 0.25px)); }
+			100% { transform: translate(0,0); }
+		}
+	</style>
+</head>
+<body>
+	<dl>
+		<dt>PLAYDATE</dt>
+		<dd><a href="https://play.date/games/ratcheteer/">Ratcheteer</a></dd>
+		<dd><a href="https://play.date/games/crankin/">Crankin's Time Travel Adventure</a></dd>
+		
+		<dt>MAC &amp; PC</dt>
+		<dd><a href="http://retrogamecrunch.com/">Retro Game Crunch</a> <b class="dot" id="rgc"></b></dd>
+
+		<!-- RIP :sob: -->
+		<dt>iOS</dt>
+		<dd><a href="http://itunes.apple.com/us/app/the-last-rocket/id429747672?ls=1&amp;mt=8">The Last Rocket</a> <b class="dot" id="lastrocket"></b></dd>
+		<dd><a href="http://itunes.apple.com/us/app/flips-escape/id546109449?ls=1&amp;mt=8">Flip’s Escape</a></dd>
+		<dd><a href="http://itunes.apple.com/us/app/horror-vacui-2/id404573320?mt=8">Horror Vacui 2</a></dd>
+		<dd><a href="/chunks/">Chunks</a></dd>
+		<dd><a href="/horrorvacui/">Horror Vacui</a></dd>
+	</dl>
+
+	<script>
+		document.querySelectorAll('a').forEach(function (ele, i) {
+			ele.addEventListener('mousemove', function (e) {
+				var baseExpX = 4; 	// 2 ^ 4 == 16
+				var baseExpY = 2; 	// 2 ^ 4 == 16
+
+				// element proportions
+				var w = this.offsetWidth;
+				var h = this.offsetHeight;
+				var hw = w/2;
+				var hh = h/2;
+
+				var t = this;
+				var b = t.parentNode.querySelector('b');
+
+				// mouse position relative to element
+				var pos = {
+					x : e.pageX - t.offsetLeft,
+					y : e.pageY - t.offsetTop
+				};
+
+				// mouse position offset from center of element
+				var cx = pos.x - hw;
+				var cy = pos.y - hh;
+
+				// percentage from center to edge
+				var px = Math.abs(cx/hw);
+				var py = Math.abs(cy/hh);
+
+				// new top/left positions
+				var nx = Math.round(Math.pow(2, px * baseExpX)) * (cx < 0 ? -1 : 1);
+				var ny = Math.round(Math.pow(2, py * baseExpY)) * (cy < 0 ? -1 : 1);
+
+				const limit = 50;
+
+				// prevent element from going nuts
+				nx = Math.max(-limit, Math.min(nx, limit));
+				ny = Math.max(-limit, Math.min(ny, limit));
+
+				t.style.zIndex = 10;
+				this.style.setProperty('--last-x', nx);
+				this.style.setProperty('--last-y', ny);
+
+				t.style.animationName = 'none';
+				t.style.transform = 'translate('+nx+'px, '+ny+'px)';
+			});
+
+			ele.addEventListener('mouseout', function (e) {
+				this.style.animationName = 'bounce-back';
+				this.style.transform = 'none';
+			});
+		});
+	</script>
+</body>
+</html>
